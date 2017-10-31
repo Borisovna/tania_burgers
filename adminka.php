@@ -53,8 +53,7 @@ echo "<table border=\"2\" cellpadding=\"5\" align=\"center\">
    </tr>";
 for($i=0; $i<count ($arr_order);$i++){
     echo "<tr>";
-    
-    for ($j=0;$j<count ($arr_order[$i]);$j++){
+        for ($j=0;$j<count ($arr_order[$i]);$j++){
     
         echo "<td>";
         print_r ($arr_order[$i][$j]);

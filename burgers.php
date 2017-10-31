@@ -49,7 +49,6 @@ if (!$flag == true) {
     $count_order = count ($count_id);
     
 }
-
 //получаем id_order последней записи в таблицу заказы, собераем массив данных для письма покупателю, записываем письмо в файл
 $query_idorder = $connection->query ("SELECT id_order FROM `order`");
 $end_idorder = end ($query_idorder->fetch_all ());
