@@ -1,6 +1,6 @@
 <?php
 require_once 'login.php';
-$connection = new mysqli($db_localhost, $db_username, $db_password, $db_database);
+$connection = new mysqli($db_hostname, $db_username, $db_password, $db_database);
 if ($connection->connect_errno) {
     printf ("Не удалось подключиться: %s\n", $connection->connect_error);
     exit();
@@ -22,7 +22,7 @@ if (!empty($_POST['name']) and !empty($_POST['email'])) {
     exit();
 }
 //-запрос на запись в базу нового покупателя
-$query_insert_userinfo = "INSERT INTO info_user (name,email,phone,street,home,appt,part) VALUES ('$_POST[name]','$_POST[email]','$_POST[phone]','$_POST[street]','$_POST[home]','$_POST[appr]','$_POST[part]')";
+$query_insert_userinfo = "INSERT INTO info_user (name,email,phone,street,home,appt,part) VALUES ('$_POST[name]','$_POST[email]','$_POST[phone]','$_POST[street]','$_POST[home]','$_POST[appt]','$_POST[part]')";
 //-запрос на получение id покупателя
 $query_id_userinfo = "SELECT id_user FROM info_user WHERE email='$_POST[email]'";
 
@@ -51,10 +51,13 @@ if (!$flag == true) {
 }
 //получаем id_order последней записи в таблицу заказы, собераем массив данных для письма покупателю, записываем письмо в файл
 $query_idorder = $connection->query ("SELECT id_order FROM `order`");
-$end_idorder = end ($query_idorder->fetch_all ());
+$arrey_idorder=$query_idorder->fetch_all ();
+//echo '<pre>';
+//print_r ($arrey_idorder);
+$end_idorder = end ($arrey_idorder);
 mysqli_close ($connection);
 $arr_list['id_order'] = $end_idorder[0];
-$arr_list['adres'] = "Улица $_POST[street], дом $_POST[home], квартира $_POST[appr], этаж $_POST[part]";
+$arr_list['adres'] = "Улица $_POST[street], дом $_POST[home], квартира $_POST[appt], этаж $_POST[part]";
 $arr_list['count_order'] = $count_order;
 fopen ('list.txt', 'w');
 if ($arr_list['count_order'] == 1) {
@@ -63,3 +66,4 @@ if ($arr_list['count_order'] == 1) {
     $srt_list = "Заказ № $arr_list[id_order], <br> Ваш заказ будет доставлен по адресу : $arr_list[adres] /. <br> DarkBeefBurger за 500 рублей, 1 шт/.<br> Спасибо! Это уже $arr_list[count_order] заказ!";
 }
 file_put_contents ('list.txt', $srt_list);
+//header (location)
