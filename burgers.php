@@ -5,12 +5,20 @@ if ($connection->connect_errno) {
     printf ("Не удалось подключиться: %s\n", $connection->connect_error);
     exit();
 }
+$name = strip_tags($_POST['name']);
+$phone = $_POST['phone'];
+$email = strip_tags($_POST['email']);
+$street = strip_tags($_POST['street']);
+$home = strip_tags($_POST['home']);
+$part = (int)($_POST['part']);
+$appt = (int)($_POST['appt']);
+$comment = strip_tags($_POST['comment']);
 //-проверка есть ли юзер с таким email
-if (!empty($_POST['name']) and !empty($_POST['email'])) {
+if (!empty($name) and !empty($email)) {
     $result_mail = $connection->query ('SELECT email FROM info_user');
     $data_mail = $result_mail->fetch_all ();
     foreach ($data_mail as $key => $value) {
-        if ($data_mail[$key][0] == $_POST['email']) {
+        if ($data_mail[$key][0] === $email) {
             $flag = true;
             break;
         } else {
@@ -21,10 +29,11 @@ if (!empty($_POST['name']) and !empty($_POST['email'])) {
     echo 'данные переданы не были!';
     exit();
 }
+
 //-запрос на запись в базу нового покупателя
-$query_insert_userinfo = "INSERT INTO info_user (name,email,phone,street,home,appt,part) VALUES ('$_POST[name]','$_POST[email]','$_POST[phone]','$_POST[street]','$_POST[home]','$_POST[appt]','$_POST[part]')";
+$query_insert_userinfo = "INSERT INTO info_user (name,email,phone,street,home,appt,part) VALUES ('$name','$email','$phone','$street','$home','$appt','$part')";
 //-запрос на получение id покупателя
-$query_id_userinfo = "SELECT id_user FROM info_user WHERE email='$_POST[email]'";
+$query_id_userinfo = "SELECT id_user FROM info_user WHERE email='$email'";
 
 // если нет, такого покупателя мы его записываем в таблицу info_user, и потом записываем в базу даные о заказе, если есть - только данные о заказе.
 if (!$flag == true) {
@@ -32,15 +41,16 @@ if (!$flag == true) {
     $rezult_id_userinfo = $connection->query ($query_id_userinfo);
     $data1 = $rezult_id_userinfo->fetch_row ();
     //-запрос на запись нового заказа в базу
-    $query_insert_order = "INSERT INTO `order` (id_user,comment) VALUES ('$data1[0]','$_POST[comment]')";
+    $query_insert_order = "INSERT INTO `order` (id_user,comment) VALUES ('$data1[0]','$comment')";
     $rezult_insert_order = $connection->query ($query_insert_order);
     $count_order = 1;
+    echo '<br> Спасибо за первый заказ, приходите к нам еще!';
 } else {
-    echo '<br> такой покупатель у нас был!';
+    echo '<br> Спасибо за повторный заказ!';
     $rezult_id_userinfo = $connection->query ($query_id_userinfo);
     $data1 = $rezult_id_userinfo->fetch_row ();
     //-запрос на запись нового заказа в базу
-    $query_insert_order = "INSERT INTO `order` (id_user,comment) VALUES ('$data1[0]','$_POST[comment]')";
+    $query_insert_order = "INSERT INTO `order` (id_user,comment) VALUES ('$data1[0]','$comment')";
     $rezult_insert_order = $connection->query ($query_insert_order);
     //-запрос на получение все id покупателя в таблице заказов
     $query_allid_userinfo = "SELECT id_user FROM `order` WHERE id_user=$data1[0]";
@@ -57,7 +67,7 @@ $arrey_idorder=$query_idorder->fetch_all ();
 $end_idorder = end ($arrey_idorder);
 mysqli_close ($connection);
 $arr_list['id_order'] = $end_idorder[0];
-$arr_list['adres'] = "Улица $_POST[street], дом $_POST[home], квартира $_POST[appt], этаж $_POST[part]";
+$arr_list['adres'] = "Улица $street, дом $home, квартира $appt, этаж $part";
 $arr_list['count_order'] = $count_order;
 fopen ('list.txt', 'w');
 if ($arr_list['count_order'] == 1) {

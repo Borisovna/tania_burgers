@@ -7,7 +7,7 @@
 <body>
 <?php
 require_once 'login.php';
-$connection = new mysqli($db_localhost, $db_username, $db_password, $db_database);
+$connection = new mysqli($db_hostname, $db_username, $db_password, $db_database);
 if ($connection->connect_errno) {
     printf ("Не удалось подключиться: %s\n", $connection->connect_error);
     exit();
