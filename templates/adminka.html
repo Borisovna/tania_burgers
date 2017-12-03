@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Админка</title>
+</head>
+<body>
+<table border="2" cellpadding="5" align="center">
+    <caption> <strong style="color:darkslateblue; font-size: 1.5em">Таблица пользователей</strong>
+    </caption>
+    <tr>
+        <th>Номер покупателя</th>
+        <th>Имя покупателя</th>
+        <th>email покупателя</th>
+        <th>Телефон покупателя</th>
+        <th>Улица покупателя</th>
+        <th>Дом покупателя</th>
+    </tr>
+    {% for d in data %}
+    <tr>
+        <td>{{ d.num }}</td>
+        <td>{{ d.name }}</td>
+        <td>{{ d.email }}</td>
+        <td>{{ d.phone }}</td>
+        <td>{{ d.street }}</td>
+        <td>{{ d.home }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<table border="2" cellpadding="5" align="center">
+    <caption><strong style="color: purple; font-size: 2em">Таблица заказов </strong></caption>
+    <tr>
+        <th>Номер заказа</th>
+        <th>Имя покупателя</th>
+        <th>Содержание заказа</th>
+    </tr>
+    {% for b in orders %}
+    <tr>
+        <td>{{ b.num }}</td>
+        <td>{{ b.name }}</td>
+        <td>{{ b.order }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+
+</body>
+</html>
