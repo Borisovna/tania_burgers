@@ -44,9 +44,8 @@ if (!$flag == true) {
     $query_insert_order = "INSERT INTO `order` (id_user,comment) VALUES ('$data1[0]','$comment')";
     $rezult_insert_order = $connection->query ($query_insert_order);
     $count_order = 1;
-    echo '<br> Спасибо за первый заказ, приходите к нам еще!';
+//    echo '<br> Спасибо за первый заказ, приходите к нам еще!';
 } else {
-    echo '<br> Спасибо за повторный заказ!';
     $rezult_id_userinfo = $connection->query ($query_id_userinfo);
     $data1 = $rezult_id_userinfo->fetch_row ();
     //-запрос на запись нового заказа в базу
@@ -75,5 +74,44 @@ if ($arr_list['count_order'] == 1) {
 } else {
     $srt_list = "Заказ № $arr_list[id_order], <br> Ваш заказ будет доставлен по адресу : $arr_list[adres] /. <br> DarkBeefBurger за 500 рублей, 1 шт/.<br> Спасибо! Это уже $arr_list[count_order] заказ!";
 }
-file_put_contents ('list.txt', $srt_list);
-//header (location)
+//echo $name.$email.$srt_list;
+//file_put_contents ('list.txt', $srt_list);
+require_once __DIR__."/vendor/autoload.php";
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+$mail = new PHPMailer(true);                              // Passing `true` enables exceptions$this->
+//$mail->SMTPDebug = 2;                                 // Enable verbose debug output
+$mail->isSMTP();                                      // Set mailer to use SMTP
+$mail->Host = 'smtp.ukr.net';  // Specify main and backup SMTP servers
+$mail->SMTPAuth = true;                               // Enable SMTP authentication
+$mail->Username = '0121ok@ukr.net';                 // SMTP username
+$mail->Password = 'twapos7r';                           // SMTP password
+$mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+$mail->Port = '465';                                    // TCP port to connect to
+
+$mail->setFrom('0121ok@ukr.net', 'Бургерная №1');
+$mail->addAddress("$email", "$name");     // Add a recipient
+$mail->addCC('0121mymail@gmail.com','от Бургерной');
+$mail->addReplyTo('0121ok@ukr.net', "Robot");
+$mail->CharSet = 'UTF-8';
+
+$mail->isHTML(true);                                  // Set email format to HTML
+$mail->Subject = "Письмо с сайта Burgers. Ваш заказ от " . date('d.m.Y');
+$mail->Body = "$srt_list";
+$mail->AltBody = "$srt_list";
+if (!$mail->send()) {
+    echo 'Письмо не может быть отправлено.';
+//    echo 'Ошибка: ' . $this->mail->ErrorInfo;
+} else {
+
+//    echo "<a href=\" / \">Вернуться обратно</a>";
+}
+
+// рекаптч проверка
+$remoteIp = $_SERVER['REMOTE_ADDR'];
+$gRecaptchaResponse = $_REQUEST['g-recaptcha-response'];
+$recaptcha = new \ReCaptcha\ReCaptcha('6Lc7LDsUAAAAALPNafh90F86VhDK3gig2nZdEIvU');
+$resp = $recaptcha->verify($gRecaptchaResponse, $remoteIp);
+
+header('Location: ind.php');
